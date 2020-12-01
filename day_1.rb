@@ -6,8 +6,8 @@ class Report
   end
 
   # very slow, but easy to implement ;)
-  def parse(num_of_entries)
-      @data.permutation(num_of_entries)
+  def parse(entries_to_sum)
+      @data.permutation(entries_to_sum)
            .select {|x| x.sum == 2020}
            .map(&:sort)
            .uniq

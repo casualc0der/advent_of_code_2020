@@ -9,9 +9,7 @@ class Report
   def parse(entries_to_sum)
     @data.permutation(entries_to_sum)
          .select {|x| x.sum == 2020}
-         .map(&:sort)
-         .uniq
-         .flatten(1)
+         .first
          .inject(:*)
   end
 end

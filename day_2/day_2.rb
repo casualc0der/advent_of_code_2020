@@ -1,5 +1,5 @@
-require_relative 'validator'
 require_relative 'formatter'
+require_relative 'validator'
 
 class PasswordChecker
   include Formatter
@@ -20,6 +20,5 @@ class PasswordChecker
       format_line(line)
     end
   end
-
 end
 

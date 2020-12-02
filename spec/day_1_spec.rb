@@ -1,4 +1,4 @@
-require_relative '../day_1.rb'
+require_relative '../day_1/day_1.rb'
 require 'tempfile'
 RSpec.describe 'Report Repair' do
   let(:file)   { Tempfile.new }

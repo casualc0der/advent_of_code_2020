@@ -1,60 +1,6 @@
-class PasswordChecker
-  include Validator
-  attr_reader :data
-  def initialize(file)
-    @data = File.open(file).read.split("\n")
-  end
-  def check(flag = :part_1)
-    data = format
-    data.map {|password_line| password_validator(password_line, flag) }.sum
-  end
-
-  def format
-    @data.map do |line|
-      format_line(line)
-    end
-  end
-
-  private
 
 
-    def format_line(line)
-
-      data_line = line.split(/ /)
-      min_max = data_line[0].split('-')
-      letter_to_check = data_line[1].gsub(':', '')
-      password_to_check = data_line[2]
-
-     {
-       min: min_max.first.to_i,
-       max: min_max.last.to_i,
-       letter: letter_to_check,
-       password: password_to_check
-      }
-    end
-  end
-
-
-  module Validator
-  def password_validator(password_line, flag)
-    case flag
-    when :part_1
-     num =  password_line[:password].split('').tally[password_line[:letter]] || 0
-     return num >= password_line[:min] && num <= password_line[:max] ? 1 : 0
-    when :part_2
-      first_index = password_line[:min]
-      second_index = password_line[:max]
-      password = password_line[:password].split('').unshift(0)
-      letter = password_line[:letter]
-
-      return 0 if password[first_index] == letter && password[second_index] == letter
-      return 1 if password[first_index] == letter || password[second_index] == letter
-      0
-    end
-  end
-  end
-
-
+require_relative '../day_2/day_2.rb'
 require 'tempfile'
 RSpec.describe 'Password Philosophy' do
 

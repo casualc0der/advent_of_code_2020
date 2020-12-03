@@ -10,17 +10,24 @@ class Trajectory
   end
 
   def single_journey(right=3, down=1)
-    trees = 0
+    trees_hit = 0
     current_index = 0
     pattern.each_with_index do |move, i|
       next if i % 2 != 0 && down == 2
-      trees += 1 if move[current_index] == '#'
+      trees_hit += 1 if hit_a_tree?(move[current_index])
       current_index += right
     end
-    trees
+    trees_hit
   end
 
   def multi_journey(routes)
     routes.map { |route| single_journey(route[0], route[1]) }.inject(:*)
   end
+
+  private
+
+  def hit_a_tree?(pos)
+    pos == '#'
+  end
+
 end

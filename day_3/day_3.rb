@@ -13,7 +13,7 @@ class Trajectory
     trees_hit = 0
     current_index = 0
     pattern.each_with_index do |move, i|
-      next if i % 2 != 0 && down == 2
+      next if skip_row?(i, down)
       trees_hit += 1 if hit_a_tree?(move[current_index])
       current_index += right
     end
@@ -28,6 +28,10 @@ class Trajectory
 
   def hit_a_tree?(pos)
     pos == '#'
+  end
+
+  def skip_row?(index, down)
+    index % 2 != 0 && down == 2
   end
 
 end

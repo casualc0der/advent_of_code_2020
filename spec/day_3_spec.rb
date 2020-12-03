@@ -5,6 +5,20 @@ class Trajectory
     @data = File.read(file).split("\n")
   end
 
+  def pattern
+    @data.map {|x| x * 100}
+  end
+
+  def parse
+    trees = 0
+    current_index = 0
+    pattern.each do |move|
+      trees += 1 if move[current_index] == '#'
+      current_index += 3
+    end
+    trees
+  end
+
 
 end
 
@@ -18,6 +32,7 @@ RSpec.describe 'Toboggan Trajectory' do
     trajectory = Trajectory.new(file)
     expect(trajectory.data).not_to be_empty
   end
+
   it 'can split the input into chunks' do
     file = Tempfile.new
     file.write(<<~ROUTE
@@ -29,4 +44,40 @@ RSpec.describe 'Toboggan Trajectory' do
     trajectory = Trajectory.new(file)
     expect(trajectory.data).to eq(['....#............#.###...#.#.#.', '.#.#....##.........#.....##.#..'])
   end
+
+  it 'can create a pattern string' do
+    file = Tempfile.new
+    file.write(<<~ROUTE
+               ....#............#.###...#.#.#.
+               .#.#....##.........#.....##.#..
+               ROUTE
+              )
+    file.flush
+    trajectory = Trajectory.new(file)
+    expect(trajectory.pattern).to eq(['....#............#.###...#.#.#.' *100, '.#.#....##.........#.....##.#..'*100])
+  end
+
+  it 'can find tress in a simple pattern' do
+    file = Tempfile.new
+    file.write(<<~ROUTE
+                ..##.........##.........##.........##.........##.........##.......
+                #...#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
+                .#....#..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
+                ..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
+                .#...##..#..#...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
+                ..#.##.......#.##.......#.##.......#.##.......#.##.......#.##.....
+                .#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
+                .#........#.#........#.#........#.#........#.#........#.#........#
+                #.##...#...#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...
+                #...##....##...##....##...##....##...##....##...##....##...##....#
+                .#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#
+                ROUTE
+              )
+    file.flush
+    trajectory = Trajectory.new(file)
+    expect(trajectory.parse).to eq(7)
+  end
+
+
+
 end

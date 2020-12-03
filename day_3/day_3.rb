@@ -21,10 +21,6 @@ class Trajectory
   end
 
   def multi_journey(routes)
-    trees = []
-    routes.each do |route|
-    trees << single_journey(route[0], route[1])
-    end
-    trees.inject(:*)
+    routes.map { |route| single_journey(route[0], route[1]) }.inject(:*)
   end
 end

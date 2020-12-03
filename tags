@@ -1,0 +1,17 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Formatter	day_2/formatter.rb	/^module Formatter$/;"	m
+PasswordChecker	day_2/day_2.rb	/^class PasswordChecker$/;"	c
+Report	day_1/day_1.rb	/^class Report$/;"	c
+Validator	day_2/validator.rb	/^  module Validator$/;"	m
+check	day_2/day_2.rb	/^  def check(flag = :part_1)$/;"	f	class:PasswordChecker
+format	day_2/day_2.rb	/^  def format$/;"	f	class:PasswordChecker
+format_line	day_2/formatter.rb	/^    def format_line(line)$/;"	f	class:Formatter
+initialize	day_1/day_1.rb	/^  def initialize(file)$/;"	f	class:Report
+initialize	day_2/day_2.rb	/^  def initialize(file)$/;"	f	class:PasswordChecker
+parse	day_1/day_1.rb	/^  def parse(entries_to_sum)$/;"	f	class:Report
+password_validator	day_2/validator.rb	/^  def password_validator(password_line, flag)$/;"	f	class:Validator

@@ -57,7 +57,7 @@ RSpec.describe 'Toboggan Trajectory' do
     expect(trajectory.pattern).to eq(['....#............#.###...#.#.#.' *100, '.#.#....##.........#.....##.#..'*100])
   end
 
-  it 'can find tress in a simple pattern' do
+  it 'can find trees in a simple pattern' do
     file = Tempfile.new
     file.write(<<~ROUTE
                 ..##.........##.........##.........##.........##.........##.......
@@ -78,6 +78,9 @@ RSpec.describe 'Toboggan Trajectory' do
     expect(trajectory.parse).to eq(7)
   end
 
-
-
+  it 'can find trees in the full pattern' do
+    path = File.expand_path(File.dirname(__FILE__) + "/route_planner.txt")
+    trajectory = Trajectory.new(path)
+    expect(trajectory.parse).to eq('?')
+  end
 end

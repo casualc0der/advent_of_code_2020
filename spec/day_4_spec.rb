@@ -28,8 +28,8 @@ class PassportScanner
       return false unless issue_year_valid?(passport['iyr'])
       return false unless expiration_year_valid?(passport['eyr'])
       return false unless height_valid?(passport['hgt'])
-      return false unless hair_colour_valid(passport['hcl'])
-      return false unless eye_colour_valid(passport['ecl'])
+      return false unless hair_colour_valid?(passport['hcl'])
+      return false unless eye_colour_valid?(passport['ecl'])
       return false unless passport_id_valid?(passport['pid'])
       true
     end
@@ -253,18 +253,17 @@ RSpec.describe 'Passport Processing' do
       end
     end
     end
-    pending
     it 'should validate each passengers passport and report total (smol list)' do
       file  = Tempfile.new
       file.write(test_data)
       file.flush
       passport_scanner = PassportScanner.new(file)
-      expect(passport_scanner.report(:strict)).to eq(2)
+      expect(passport_scanner.report(:strict)).to eq('?')
     end
     it 'should validate each passengers passport and report total (full list)' do
       path = File.expand_path(File.dirname(__FILE__) + "/passports.txt")
       passport_scanner = PassportScanner.new(path)
-      expect(passport_scanner.report).to eq(192)
+      expect(passport_scanner.report(:strict)).to eq('?')
     end
   end
 end

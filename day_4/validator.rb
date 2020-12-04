@@ -26,8 +26,7 @@ module Validator
 
   def hair_colour_valid?(field)
     return false unless field[0] == '#'
-    allowed_chars = (0..9).to_a.map(&:to_s) + ('a'..'f').to_a
-    allowed_chars << '#'
+    allowed_chars = (0..9).to_a.map(&:to_s) + ('a'..'f').to_a << '#'
     return false if (field.split('') - allowed_chars).size > 0
     true
   end

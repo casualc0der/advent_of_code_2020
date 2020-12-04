@@ -1,97 +1,4 @@
-class PassportScanner
-  REQUIRED_FIELDS = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid']
-  OPTIONAL_FIELDS = ['cid']
-  attr_reader :data
-  def initialize(file)
-    @data = File.read(file).split("\n\n")
-  end
-
-  def sanitized
-    @data.map { |str| str.tr("\n", ' ').rstrip }
-  end
-
-  def passenger_data
-    sanitized.map { |str| str.split(' ').map {|x| x.split(':')} }.map {|p| p.to_h}
-  end
-  def report(strictness = :lax)
-    passenger_data.map { |passport| valid?(passport, strictness) ? 1 : 0 }.sum
-  end
-
-  def valid?(passport, flag)
-    case flag
-    when :lax
-      REQUIRED_FIELDS.each {|field| return false unless passport.has_key?(field) }
-      true
-    when :strict
-      REQUIRED_FIELDS.each {|field| return false unless passport.has_key?(field) }
-      return false unless birth_year_valid?(passport['byr'])
-      return false unless issue_year_valid?(passport['iyr'])
-      return false unless expiration_year_valid?(passport['eyr'])
-      return false unless height_valid?(passport['hgt'])
-      return false unless hair_colour_valid?(passport['hcl'])
-      return false unless eye_colour_valid?(passport['ecl'])
-      return false unless passport_id_valid?(passport['pid'])
-      true
-    end
-  end
-
-  def birth_year_valid?(field)
-    return false unless field.size == 4
-    return false if field.to_i < 1920
-    return false if field.to_i > 2002
-    true
-  end
-  def issue_year_valid?(field)
-    return false unless field.size == 4
-    return false if field.to_i < 2010
-    return false if field.to_i > 2020
-    true
-  end
-  def expiration_year_valid?(field)
-    return false unless field.size == 4
-    return false if field.to_i < 2020
-    return false if field.to_i > 2030
-    true
-  end
-  def height_valid?(field)
-    return false unless field.include?('cm') || field.include?('in')
-    if field.include?('cm')
-      height = field.split('cm').first.to_i
-      return false if height < 150
-      return false if height > 193
-    else
-      height = field.split('in').first.to_i
-      return false if height < 59
-      return false if height > 76
-    end
-    true
-  end
-
-  def hair_colour_valid?(field)
-    return false unless field[0] == '#'
-    return false if field.size > 7
-    allowed_chars = (0..9).to_a.map(&:to_s) + ('a'..'f').to_a
-    allowed_chars << '#'
-    return false if (field.split('') - allowed_chars).size > 0
-    true
-  end
-
-  def eye_colour_valid?(field)
-    allowed_eye_colours = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
-    return false unless allowed_eye_colours.include?(field)
-    true
-  end
-
-  def passport_id_valid?(field)
-    allowed_chars = (0..9).to_a.map(&:to_s)
-    return false unless field.size == 9
-    return false if (field.split('') - allowed_chars).size > 0
-    true
-  end
-
-
-end
-
+require_relative '../day_4/day_4'
 
 require 'tempfile'
 RSpec.describe 'Passport Processing' do
@@ -258,12 +165,12 @@ RSpec.describe 'Passport Processing' do
       file.write(test_data)
       file.flush
       passport_scanner = PassportScanner.new(file)
-      expect(passport_scanner.report(:strict)).to eq('?')
+      expect(passport_scanner.report(:strict)).to eq(2)
     end
     it 'should validate each passengers passport and report total (full list)' do
       path = File.expand_path(File.dirname(__FILE__) + "/passports.txt")
       passport_scanner = PassportScanner.new(path)
-      expect(passport_scanner.report(:strict)).to eq('?')
+      expect(passport_scanner.report(:strict)).to eq(101)
     end
   end
 end

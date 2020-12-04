@@ -1,40 +1,31 @@
 module Validator
 
   def birth_year_valid?(field)
-    return false unless field.size == 4
-    return false if field.to_i < 1920
-    return false if field.to_i > 2002
+    return false unless (1920..2002).include?(field.to_i)
     true
   end
   def issue_year_valid?(field)
-    return false unless field.size == 4
-    return false if field.to_i < 2010
-    return false if field.to_i > 2020
+    return false unless (2010..2020).include?(field.to_i)
     true
   end
   def expiration_year_valid?(field)
-    return false unless field.size == 4
-    return false if field.to_i < 2020
-    return false if field.to_i > 2030
+    return false unless (2020..2030).include?(field.to_i)
     true
   end
   def height_valid?(field)
     return false unless field.include?('cm') || field.include?('in')
     if field.include?('cm')
       height = field.split('cm').first.to_i
-      return false if height < 150
-      return false if height > 193
+      return false unless (150..193).include?(height)
     else
       height = field.split('in').first.to_i
-      return false if height < 59
-      return false if height > 76
+      return false unless (59..76).include?(height)
     end
     true
   end
 
   def hair_colour_valid?(field)
     return false unless field[0] == '#'
-    return false if field.size > 7
     allowed_chars = (0..9).to_a.map(&:to_s) + ('a'..'f').to_a
     allowed_chars << '#'
     return false if (field.split('') - allowed_chars).size > 0

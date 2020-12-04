@@ -1,5 +1,16 @@
 module Validator
 
+  def strict_validate(passport)
+      return false unless birth_year_valid?(passport['byr'])
+      return false unless issue_year_valid?(passport['iyr'])
+      return false unless expiration_year_valid?(passport['eyr'])
+      return false unless height_valid?(passport['hgt'])
+      return false unless hair_colour_valid?(passport['hcl'])
+      return false unless eye_colour_valid?(passport['ecl'])
+      return false unless passport_id_valid?(passport['pid'])
+      true
+  end
+
   def birth_year_valid?(field)
     return false unless (1920..2002).include?(field.to_i)
     true

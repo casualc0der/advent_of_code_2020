@@ -27,14 +27,7 @@ class PassportScanner
       true
     when :strict
       REQUIRED_FIELDS.each {|field| return false unless passport.has_key?(field) }
-      return false unless birth_year_valid?(passport['byr'])
-      return false unless issue_year_valid?(passport['iyr'])
-      return false unless expiration_year_valid?(passport['eyr'])
-      return false unless height_valid?(passport['hgt'])
-      return false unless hair_colour_valid?(passport['hcl'])
-      return false unless eye_colour_valid?(passport['ecl'])
-      return false unless passport_id_valid?(passport['pid'])
-      true
+      strict_validate(passport)
     end
   end
 end

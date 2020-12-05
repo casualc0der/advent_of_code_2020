@@ -10,12 +10,12 @@ class TicketScanner
   def largest_seat_id
     @data.map {|ticket| seat_finder(ticket)}.max
   end
+
   def my_seat
     seen_tickets = @data.map {|ticket| seat_finder(ticket)}
     all_possible_tickets = (8..976).to_a
     (all_possible_tickets - seen_tickets).first
   end
-
 
   def seat_finder(str)
     plane_rows = (0..127).to_a
@@ -27,13 +27,13 @@ class TicketScanner
       row = rows_on_ticket.shift
       plane_rows = seat_splitter(row, plane_rows)
     end
+
     while plane_columns.size > 1
       col = cols_on_ticket.shift
       plane_columns = seat_splitter(col, plane_columns)
     end
 
     return plane_rows.first * SEAT_ID_MODIFIER + plane_columns.first
-
   end
 
   def seat_splitter(char, arr)

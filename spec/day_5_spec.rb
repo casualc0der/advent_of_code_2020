@@ -107,7 +107,6 @@ RSpec.describe 'Binary Boarding' do
         path = File.expand_path(File.dirname(__FILE__) + "/plane_tickets.txt")
         ticket_scanner = TicketScanner.new(path)
         expect(ticket_scanner.my_seat).to eq(685)
-
       end
     end
   end

@@ -2,7 +2,6 @@ class TicketScanner
   attr_reader :data, :seat_locations
 
   SEAT_ID_MODIFIER = 8
-  ALL_POSSIBLE_TICKETS = (8..976).to_a
 
   def initialize(file)
     @data = File.read(file).split(/\n/)
@@ -14,7 +13,7 @@ class TicketScanner
   end
 
   def my_seat
-    (ALL_POSSIBLE_TICKETS - seat_locations).first
+   ((8..largest_seat_id).to_a - seat_locations).first
   end
 
   def seat_finder(str)

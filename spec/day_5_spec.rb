@@ -1,45 +1,4 @@
-class TicketScanner
-  attr_reader :data
-
-  SEAT_ID_MODIFIER = 8
-
-  def initialize(file)
-    @data = File.read(file).split("\n")
-  end
-
-  def largest_seat_id
-    @data.map {|ticket| seat_finder(ticket)}.max
-  end
-
-
-  def seat_finder(str)
-    plane_rows = (0..127).to_a
-    plane_columns = (0..7).to_a
-    rows_on_ticket = str[0...7].split(//)
-    cols_on_ticket = str[7..str.size].split(//)
-
-    while plane_rows.size > 1
-      row = rows_on_ticket.shift
-      plane_rows = seat_splitter(row, plane_rows)
-    end
-    while plane_columns.size > 1
-      col = cols_on_ticket.shift
-      plane_columns = seat_splitter(col, plane_columns)
-    end
-
-    return plane_rows.first * SEAT_ID_MODIFIER + plane_columns.first
-
-  end
-
-  def seat_splitter(char, arr)
-    return arr if arr.size == 1
-    pivot = arr.size / 2
-    return arr[0...pivot] if char == 'F' || char == 'L'
-    return arr[pivot..arr.size] if char == 'B' || char == 'R'
-  end
-end
-
-
+require_relative '../day_5/day_5'
 require 'tempfile'
 RSpec.describe 'Binary Boarding' do
   describe 'setup' do
@@ -136,7 +95,18 @@ RSpec.describe 'Binary Boarding' do
         expect(ticket_scanner.largest_seat_id).to eq(820)
       end
       it 'finds the largest seat ID from the list (full)' do
-
+        path = File.expand_path(File.dirname(__FILE__) + "/plane_tickets.txt")
+        ticket_scanner = TicketScanner.new(path)
+        expect(ticket_scanner.largest_seat_id).to eq(976)
+      end
+    end
+  end
+  describe 'part 2' do
+    context '#my_seat' do
+      it 'can find my seat' do
+        path = File.expand_path(File.dirname(__FILE__) + "/plane_tickets.txt")
+        ticket_scanner = TicketScanner.new(path)
+        expect(ticket_scanner.my_seat).to eq(685)
 
       end
     end

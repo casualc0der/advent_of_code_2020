@@ -35,7 +35,3 @@ class TicketScanner
   end
 end
 
-sc = TicketScanner.new("../spec/plane_tickets.txt")
-puts sc.largest_seat_id
-puts sc.my_seat
-

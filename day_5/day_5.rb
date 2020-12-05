@@ -6,7 +6,7 @@ class TicketScanner
 
   def initialize(file)
     @data = File.read(file).split(/\n/)
-    @seat_locations = @data.map {|ticket| seat_finder(ticket)}
+    @seat_locations = data.map {|ticket| seat_finder(ticket)}
   end
 
   def largest_seat_id
@@ -26,7 +26,7 @@ class TicketScanner
     plane_rows = seat_splitter(rows.shift, plane_rows) while plane_rows.size > 1
     plane_cols = seat_splitter(cols.shift, plane_cols) while plane_cols.size > 1
 
-    return plane_rows.first * SEAT_ID_MODIFIER + plane_cols.first
+    plane_rows.first * SEAT_ID_MODIFIER + plane_cols.first
   end
 
   def seat_splitter(char, arr, pivot = arr.size/2)
@@ -34,4 +34,8 @@ class TicketScanner
     arr[pivot..arr.size]
   end
 end
+
+sc = TicketScanner.new("../spec/plane_tickets.txt")
+puts sc.largest_seat_id
+puts sc.my_seat
 

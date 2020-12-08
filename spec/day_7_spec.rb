@@ -1,3 +1,4 @@
+require 'set'
 class BagSorter
   attr_reader :data
   def initialize(file)
@@ -27,19 +28,51 @@ class BagSorter
     sanitized_data.select {|bag| bag["contains"].empty? }
   end
 
+  def find_parent_bags(name)
+    sanitized_data.select {|bag| bag["contains"].any? {|hash| hash['name'] == name}}
+  end
+
+  def find_gold_bags
+    sanitized_data.select {|bag| bag["contains"].any? {|hash| hash['name'] == 'shiny gold'}}
+  end
+
+  def find_all_bags(part = :part1)
+
+    case part
+    when :part1
+    bags = []
+    start = Set.new(find_gold_bags)
+
+    until start.empty?
+      bag = start.to_a.pop
+      arr = find_parent_bags(bag['name'])
+      arr.each {|b| start << b}
+
+      bags << bag['name']
+    end
+    return bags.uniq.size
+    when :part2
+    bags = []
+    start = Set.new(find_root_bags)
+
+    until start.empty?
+      bag = start.to_a.pop
+      return count_bags(bags.uniq) if bag['name'] == 'shiny gold'
+      arr = find_parent_bags(bag['name'])
+      arr.each {|b| start << b}
+      bags << bag
+    end
+    return bags.uniq - find_root_bags
+    end
+  end
+
+  def count_bags(arr)
+    arr.map {|bag| bag['contains'].map{|in_bag| in_bag['qty']}}.flatten.inject(:*)
+  end
+
 end
 
-# For this problem i think we should employ some form of duck typing OO
-# E.g lets make a bag class, with @contains.
-# We can store other bag objects within the @contains instance variable (array)
-# and then we can recursively find the correct bag from within the bag sorter
-#
-# class Bag
-#   def initialize(name)
-#   @name = name
-#   @contains = []
-#   end
-# end
+
 
 
 require 'tempfile'
@@ -56,6 +89,18 @@ RSpec.describe 'Handy Haversacks' do
                     dotted black bags contain no other bags.
                        FILE
 }
+
+  let(:test_data_2) { <<~FILE
+shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.
+                       FILE
+}
+
   describe 'setup' do
     it 'can open the file to be read' do
       file = Tempfile.new
@@ -137,10 +182,51 @@ RSpec.describe 'Handy Haversacks' do
       bag_sorter = BagSorter.new(file)
       expected = [
         {'name' => 'dotted black', 'contains' => [] },
-        {'name' => 'faded blue', 'contains' => [] },
+        {'name' => 'faded blue', 'contains' => [] }
       ]
-      expect(bag_sorter.find_root_bags)
+      expect(bag_sorter.find_root_bags).to match_array(expected)
 
     end
   end
-end
+  describe '#find_all_bags part1' do
+    it 'can return the correct amount of holding bags smol list' do
+      file = Tempfile.new
+      file.write(test_data)
+      file.flush
+
+      bag_sorter = BagSorter.new(file)
+      expect(bag_sorter.find_all_bags).to eq(4)
+    end
+    it 'can return the correct amount of holding bags full list' do
+      path = File.expand_path(File.dirname(__FILE__) + "/bags.txt")
+      bag_sorter = BagSorter.new(path)
+      expect(bag_sorter.find_all_bags).to eq(300)
+    end
+
+  end
+# describe '#find_all_bags part2' do
+#   it 'can return the correct amount of holding bags smol list' do
+#     file = Tempfile.new
+#     file.write(test_data)
+#     file.flush
+
+#     bag_sorter = BagSorter.new(file)
+#     expect(bag_sorter.find_all_bags(:part2)).to eq(32)
+#   end
+#   it 'can return the correct amount of holding bags med list' do
+#     file = Tempfile.new
+#     file.write(test_data_2)
+#     file.flush
+
+#     bag_sorter = BagSorter.new(file)
+#     expect(bag_sorter.find_all_bags(:part2)).to eq(126)
+#   end
+#   it 'can return the correct amount of holding bags full list' do
+#     pending 'dont run'
+#     path = File.expand_path(File.dirname(__FILE__) + "/bags.txt")
+#     bag_sorter = BagSorter.new(path)
+#     expect(bag_sorter.find_all_bags(:part2)).to eq(12)
+#   end
+# end
+
+  end

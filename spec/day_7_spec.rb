@@ -1,4 +1,5 @@
 require 'set'
+require 'pry'
 class BagSorter
   attr_reader :data
   def initialize(file)
@@ -15,6 +16,7 @@ class BagSorter
        .map{|x| x.gsub(/bags/, '')
        .gsub(/bag/, '')
        .tr('.', '')}
+
     if arr[1] == 'no other '
       contains = []
     else
@@ -25,50 +27,71 @@ class BagSorter
     {'name' => arr[0].strip, 'contains' => contains}
   end
 
-  def create_bags
-    sanitized_data.each do |raw_bag|
-
-      bag = Bag.new(raw_bag['name'])
-
-      raw_bag['contains'].each do |bg|
-        bg['qty'].times do 
-          new_bag = Bag.new(bg['name'])
-          bag.add_bag(new_bag)
-        end
-      end
-
-      @bags << bag
-
-      # we need to check all bags first
-      end
-  end
-
+  # we are close, but we need a way to check all of the edges ABOVE the shiny gold bag
   def find_all_bags
-    create_bags
-    return @bags
+    graph = Graph.new
+    counter = 0
+    sanitized_data.each do |bag|
+      graph.vertices << Vertex.new(bag['name'])
+    end
+
+    graph.vertices.each do |v|
+      contains = sanitized_data.select {|bag| bag['name'] == v.name}.first
+      contains['contains'].each do |edge|
+        g = graph.select_vertex(edge['name'])
+        v.add_edge(g)
+      end
+    end
+
+    return find_all_edges(graph)
+
+
+end
+
+  # this is where we make our heroic stand to beat this
+  def find_all_edges(arr=[], graph)
+      binding.pry
+    end
+
+
+end
+
+class Graph
+  attr_accessor :vertices
+  def initialize
+    @vertices = Set.new
+  end
+  def find_vertex?(name)
+    @vertices.any? {|v| v.name == name}
+  end
+  def select_vertex(name)
+    @vertices.select {|obj| obj.name == name}.first
+  end
+  def add_vertex(vertex)
+    @vertices << vertex
   end
 
 end
 
-class Bag
-  attr_reader :contains
+class Vertex
+  attr_reader :name, :edges
   def initialize(name)
     @name = name
-    @contains = []
+    @edges = []
   end
 
-  def contains_bag?(name)
-    contains.any {|bag| bag.name == name}
+  def add_edge(vertex)
+    @edges << vertex
   end
-
-  def select_bag(name)
-    contains.detect {|bag| bag.name == name}
+  def find_edges(name)
+    @edges.select {|v| v.name == name}.first
   end
-
-  def add_bag(bag)
-    contains << bag
+  def post_edges
+    @edges
   end
 end
+
+
 
 
 
@@ -170,21 +193,6 @@ dark violet bags contain no other bags.
       expect(bag_sorter.sanitized_data).to eq(expected)
     end
   end
-  describe '#find_root_bags' do
-    it 'can find all bags that contain no bags' do
-      file = Tempfile.new
-      file.write(test_data)
-      file.flush
-
-      bag_sorter = BagSorter.new(file)
-      expected = [
-        {'name' => 'dotted black', 'contains' => [] },
-        {'name' => 'faded blue', 'contains' => [] }
-      ]
-      expect(bag_sorter.find_root_bags).to match_array(expected)
-
-    end
-  end
   describe '#find_all_bags part1' do
     it 'can return the correct amount of holding bags smol list' do
       file = Tempfile.new
@@ -201,6 +209,8 @@ dark violet bags contain no other bags.
     end
 
   end
+
+
 # describe '#find_all_bags part2' do
 #   it 'can return the correct amount of holding bags smol list' do
 #     file = Tempfile.new

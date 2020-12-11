@@ -43,14 +43,16 @@ class BagSorter
       end
     end
 
-    return find_all_edges(graph)
+    return find_all_edges(graph.vertices.first).size
 
 
 end
 
   # this is where we make our heroic stand to beat this
-  def find_all_edges(arr=[], graph)
-      binding.pry
+  def find_all_edges(arr=[], vert)
+    return arr if vert.edges.empty?
+    arr << vert.edges.first.name
+    find_all_edges(arr, vert.edges.first)
     end
 
 

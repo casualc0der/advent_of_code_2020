@@ -3,6 +3,7 @@ class BagSorter
   attr_reader :data
   def initialize(file)
     @data = File.read(file).split("\n")
+    @bags = Set.new
   end
   def sanitized_data
     data.map {|bags| sanitizer(bags) }
@@ -24,54 +25,50 @@ class BagSorter
     {'name' => arr[0].strip, 'contains' => contains}
   end
 
-  def find_root_bags
-    sanitized_data.select {|bag| bag["contains"].empty? }
+  def create_bags
+    sanitized_data.each do |raw_bag|
+
+      bag = Bag.new(raw_bag['name'])
+
+      raw_bag['contains'].each do |bg|
+        bg['qty'].times do 
+          new_bag = Bag.new(bg['name'])
+          bag.add_bag(new_bag)
+        end
+      end
+
+      @bags << bag
+
+      # we need to check all bags first
+      end
   end
 
-  def find_parent_bags(name)
-    sanitized_data.select {|bag| bag["contains"].any? {|hash| hash['name'] == name}}
-  end
-
-  def find_gold_bags
-    sanitized_data.select {|bag| bag["contains"].any? {|hash| hash['name'] == 'shiny gold'}}
-  end
-
-  def find_all_bags(part = :part1)
-
-    case part
-    when :part1
-    bags = []
-    start = Set.new(find_gold_bags)
-
-    until start.empty?
-      bag = start.to_a.pop
-      arr = find_parent_bags(bag['name'])
-      arr.each {|b| start << b}
-
-      bags << bag['name']
-    end
-    return bags.uniq.size
-    when :part2
-    bags = []
-    start = Set.new(find_root_bags)
-
-    until start.empty?
-      bag = start.to_a.pop
-      return count_bags(bags.uniq) if bag['name'] == 'shiny gold'
-      arr = find_parent_bags(bag['name'])
-      arr.each {|b| start << b}
-      bags << bag
-    end
-    return bags.uniq - find_root_bags
-    end
-  end
-
-  def count_bags(arr)
-    arr.map {|bag| bag['contains'].map{|in_bag| in_bag['qty']}}.flatten.inject(:*)
+  def find_all_bags
+    create_bags
+    return @bags
   end
 
 end
 
+class Bag
+  attr_reader :contains
+  def initialize(name)
+    @name = name
+    @contains = []
+  end
+
+  def contains_bag?(name)
+    contains.any {|bag| bag.name == name}
+  end
+
+  def select_bag(name)
+    contains.detect {|bag| bag.name == name}
+  end
+
+  def add_bag(bag)
+    contains << bag
+  end
+end
 
 
 

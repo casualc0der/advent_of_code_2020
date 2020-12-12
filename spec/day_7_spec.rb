@@ -43,35 +43,13 @@ class BagSorter
       end
     end
 
-    hello = []
-    graph.vertices.each do |v|
-      hello << find_all_edges(v.edges)
-    end
     binding.pry
-    bork = []
-    derp = hello.select {|x| x.include?('shiny gold') && x[0] != 'shiny gold'}
-    derp.each do |bag|
-
-      bag.each do |inner_bag|
-        break if inner_bag == 'shiny gold'
-        bork << inner_bag
-      end
-    end
 
     return hello.size
 
 
 end
 
-  # this is where we make our heroic stand to beat this - yeet
-  # This is broken now
-  def find_all_edges(arr=[], edges)
-
-    return arr if edges.empty?
-    arr << edges
-
-    find_all_edges(arr, edges.pop.edges)
-    end
 
 
 end

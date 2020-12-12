@@ -45,11 +45,11 @@ class BagSorter
 
     hello = []
     graph.vertices.each do |v|
-        hello << find_all_edges(v)
+      hello << find_all_edges(v.edges)
     end
+    binding.pry
     bork = []
     derp = hello.select {|x| x.include?('shiny gold') && x[0] != 'shiny gold'}
-      binding.pry
     derp.each do |bag|
 
       bag.each do |inner_bag|
@@ -58,17 +58,19 @@ class BagSorter
       end
     end
 
-    return bork.uniq
+    return hello.size
 
 
 end
 
   # this is where we make our heroic stand to beat this - yeet
-  def find_all_edges(arr=[], vert)
+  # This is broken now
+  def find_all_edges(arr=[], edges)
 
-    return arr if vert.edges.empty?
-    arr << vert.name
-    find_all_edges(arr, vert.edges.first)
+    return arr if edges.empty?
+    arr << edges
+
+    find_all_edges(arr, edges.pop.edges)
     end
 
 
@@ -102,7 +104,7 @@ class Vertex
     @edges << vertex
   end
   def find_edges(name)
-    @edges.select {|v| v.name == name}.first
+    @edges.select {|v| v.name == name}
   end
   def post_edges
     @edges
@@ -220,12 +222,13 @@ dark violet bags contain no other bags.
       bag_sorter = BagSorter.new(file)
       expect(bag_sorter.find_all_bags).to eq(4)
     end
+# =begin
     it 'can return the correct amount of holding bags full list' do
       path = File.expand_path(File.dirname(__FILE__) + "/bags.txt")
       bag_sorter = BagSorter.new(path)
       expect(bag_sorter.find_all_bags).to eq(300)
     end
-
+# =end
   end
 
 

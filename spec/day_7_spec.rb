@@ -30,7 +30,6 @@ class BagSorter
   # we are close, but we need a way to check all of the edges ABOVE the shiny gold bag
   def find_all_bags
     graph = Graph.new
-    counter = 0
     sanitized_data.each do |bag|
       graph.vertices << Vertex.new(bag['name'])
     end
@@ -40,12 +39,32 @@ class BagSorter
       contains['contains'].each do |edge|
         g = graph.select_vertex(edge['name'])
         v.add_edge(g)
+        g.add_parent(v)
       end
     end
 
-    binding.pry
 
-    return hello.size
+    edges = []
+
+    graph.vertices.each do |v|
+      edges <<  v.parent
+
+    end
+
+    wap = graph.vertices.select {|v| v.name == 'shiny gold'}
+
+    parents = Set.new
+
+    while wap.size > 0 
+      temp = []
+      wap.each do |v|
+        parents << v.name
+        v.parent.each {|bag| temp << bag}
+      end
+      wap = temp
+    end
+
+    return (parents.size) - 1
 
 
 end
@@ -72,10 +91,11 @@ class Graph
 end
 
 class Vertex
-  attr_reader :name, :edges
+  attr_reader :name, :edges, :parent
   def initialize(name)
     @name = name
     @edges = []
+    @parent = []
   end
 
   def add_edge(vertex)
@@ -84,8 +104,8 @@ class Vertex
   def find_edges(name)
     @edges.select {|v| v.name == name}
   end
-  def post_edges
-    @edges
+  def add_parent(vertex)
+    @parent << vertex
   end
 end
 
@@ -200,13 +220,13 @@ dark violet bags contain no other bags.
       bag_sorter = BagSorter.new(file)
       expect(bag_sorter.find_all_bags).to eq(4)
     end
-# =begin
+#begin
     it 'can return the correct amount of holding bags full list' do
       path = File.expand_path(File.dirname(__FILE__) + "/bags.txt")
       bag_sorter = BagSorter.new(path)
       expect(bag_sorter.find_all_bags).to eq(300)
     end
-# =end
+#end
   end
 
 

@@ -28,7 +28,7 @@ class BagSorter
   end
 
   # we are close, but we need a way to check all of the edges ABOVE the shiny gold bag
-  def find_all_bags
+  def find_all_bags(part = :part1)
     graph = Graph.new
     sanitized_data.each do |bag|
       graph.vertices << Vertex.new(bag['name'])
@@ -38,24 +38,18 @@ class BagSorter
       contains = sanitized_data.select {|bag| bag['name'] == v.name}.first
       contains['contains'].each do |edge|
         g = graph.select_vertex(edge['name'])
+        v.contains << edge['qty']
         v.add_edge(g)
         g.add_parent(v)
       end
     end
 
-
-    edges = []
-
-    graph.vertices.each do |v|
-      edges <<  v.parent
-
-    end
-
+    case part
+    when :part1
     wap = graph.vertices.select {|v| v.name == 'shiny gold'}
 
     parents = Set.new
-
-    while wap.size > 0 
+    while wap.size > 0
       temp = []
       wap.each do |v|
         parents << v.name
@@ -66,12 +60,39 @@ class BagSorter
 
     return (parents.size) - 1
 
+    when :part2
+
+
+    wap = graph.vertices.select {|v| v.name == 'shiny gold'}
+    contents = []
+
+    while wap.size > 0
+      temp = []
+      wap.each do |v|
+        contents << v.contains
+        v.edges.each {|bag| temp << bag}
+      end
+      wap = temp
+    end
+
+    # we need an algorithm to add all of the bags together - is there a simple way to
+    # collate the data?
+
+
+    return contents
+
+    end
+
+
 
 end
 
+    def bag_adder(arr)
+    end
 
 
 end
+
 
 class Graph
   attr_accessor :vertices
@@ -92,10 +113,12 @@ end
 
 class Vertex
   attr_reader :name, :edges, :parent
+  attr_accessor :contains
   def initialize(name)
     @name = name
     @edges = []
     @parent = []
+    @contains = []
   end
 
   def add_edge(vertex)
@@ -220,25 +243,26 @@ dark violet bags contain no other bags.
       bag_sorter = BagSorter.new(file)
       expect(bag_sorter.find_all_bags).to eq(4)
     end
-#begin
     it 'can return the correct amount of holding bags full list' do
+      pending 'need bag sorter'
       path = File.expand_path(File.dirname(__FILE__) + "/bags.txt")
       bag_sorter = BagSorter.new(path)
       expect(bag_sorter.find_all_bags).to eq(300)
     end
-#end
   end
 
 
-# describe '#find_all_bags part2' do
-#   it 'can return the correct amount of holding bags smol list' do
-#     file = Tempfile.new
-#     file.write(test_data)
-#     file.flush
+ describe '#find_all_bags part2' do
+   it 'can return the correct amount of holding bags smol list' do
+     pending 'need bag sorter'
+    file = Tempfile.new
+     file.write(test_data)
+     file.flush
 
-#     bag_sorter = BagSorter.new(file)
-#     expect(bag_sorter.find_all_bags(:part2)).to eq(32)
-#   end
+     bag_sorter = BagSorter.new(file)
+     expect(bag_sorter.find_all_bags(:part2)).to eq(32)
+   end
+
 #   it 'can return the correct amount of holding bags med list' do
 #     file = Tempfile.new
 #     file.write(test_data_2)
@@ -253,6 +277,21 @@ dark violet bags contain no other bags.
 #     bag_sorter = BagSorter.new(path)
 #     expect(bag_sorter.find_all_bags(:part2)).to eq(12)
 #   end
-# end
+ end
+
+ describe '#bag_adder' do
+   it 'can return the correct amount of bags' do
+    file = Tempfile.new
+     file.write('test')
+     file.flush
+     bag_sorter = BagSorter.new(file)
+     data = [[1, 2], [3, 4], [5, 6], [], [], [], []]
+
+
+     expect(bag_sorter.bag_adder(data)).to eq(32)
+
+   end
+
+ end
 
   end

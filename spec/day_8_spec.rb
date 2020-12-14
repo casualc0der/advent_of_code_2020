@@ -1,38 +1,4 @@
-require 'pry'
-class GamesConsole
-  attr_reader :data
-  def initialize(file)
-    @data = File.read(file).split("\n").map do |d|
-      line = d.split(' ')
-      { instruction: line[0], move: line[1], visited: false }
-    end
-
-    def loop
-      acc = 0
-      index = 0
-      while true
-        line = data[index]
-        return acc if line[:visited] == true
-
-        op = line[:move][0]
-        amount = line[:move].tr("+-", "").to_i
-        case line[:instruction]
-        when 'nop'
-          index += 1
-        when 'acc'
-          index += 1
-          acc += amount if op == "+"
-          acc -= amount if op == "-"
-        when 'jmp'
-          index += amount if op == "+"
-          index -= amount if op == "-"
-        end
-        line[:visited] = true
-      end
-    end
-  end
-end
-
+require_relative '../day_8/day_8'
 
 require 'tempfile'
 RSpec.describe 'Handheld Halting' do
@@ -52,6 +18,7 @@ FILE
 }
   describe 'setup' do
     it 'can open a file to be read' do
+    skip 'all ok'
       file = Tempfile.new
       file.write('hello')
       file.flush
@@ -63,6 +30,7 @@ FILE
     end
 
     it 'can split the file into chunks' do
+      skip 'all ok'
 
       file = Tempfile.new
       file.write(test_data)
@@ -85,8 +53,9 @@ FILE
     end
   end
 
+=begin
   context 'part 1' do
-    describe 'loop' do
+    describe 'game_loop' do
       it 'can return the correct answer for smol list' do
       file = Tempfile.new
       file.write(test_data)
@@ -94,17 +63,39 @@ FILE
 
       games_console = GamesConsole.new(file)
 
-      expect(games_console.loop).to eq(5)
+      expect(games_console.game_loop).to eq(5)
 
       end
       it 'can return the correct answer for full list' do
       path = File.expand_path(File.dirname(__FILE__) + "/game_loop.txt")
       games_console = GamesConsole.new(path)
 
-      expect(games_console.loop).to eq(1654)
+      expect(games_console.game_loop).to eq(1654)
 
       end
     end
   end
+=end
+  context 'part 2' do
+    describe 'loop_de_loop' do
+      it 'can return the correct answer for smol list' do
+      file = Tempfile.new
+      file.write(test_data)
+      file.flush
 
+      games_console = GamesConsole.new(file)
+
+      expect(games_console.loop_de_loop).to eq(8)
+
+      end
+
+      it 'can return the correct answer for full list' do
+      path = File.expand_path(File.dirname(__FILE__) + "/game_loop.txt")
+      games_console = GamesConsole.new(path)
+
+      expect(games_console.loop_de_loop).to eq(833)
+
+      end
+    end
+  end
 end

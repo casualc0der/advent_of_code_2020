@@ -37,8 +37,16 @@ class GamesConsole
       jmp = @data.each_index.select {|i| @data[i][:instruction] == 'jmp'}
 
       nop.each do |i|
-        nop_to_jmp(i) == false ? next : nop_to_jmp(i)
+        @data[i][:instruction] = 'jmp'
+        x = game_loop(:part_2, @data)
+        if x == false
+          @data[i][:instruction] = 'nop'
+          reset_data
+        else
+          return x
+        end
       end
+
       jmp.each do |i|
         @data[i][:instruction] = 'nop'
         y = game_loop(:part_2, @data)
@@ -55,19 +63,5 @@ class GamesConsole
       @data.each do |d|
         d[:visited] = false
       end
-    end
-
-    private
-
-    def nop_to_jmp(index)
-        @data[index][:instruction] = 'jmp'
-        x = game_loop(:part_2, @data)
-        if x == false
-          @data[index][:instruction] = 'nop'
-          reset_data
-          return false
-        else
-          return x
-        end
     end
 end

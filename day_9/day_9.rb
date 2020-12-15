@@ -3,9 +3,7 @@ class PortCracker
   def initialize(file)
     @data = File.read(file).split("\n").map(&:to_i)
   end
-  def part_1(p)
-    preamble_size = p
-    n = preamble_size
+  def part_1(n)
     i = 0
     while n < data.size
       slice = data[i...n]

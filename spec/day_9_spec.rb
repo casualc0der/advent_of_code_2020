@@ -1,44 +1,4 @@
-class PortCracker
-  attr_reader :data
-  def initialize(file)
-    @data = File.read(file).split("\n").map(&:to_i)
-  end
-  def part_1(p)
-    preamble_size = p
-    n = preamble_size
-    i = 0
-    while n < data.size
-      slice = data[i...n]
-      check = data[n]
-      return check unless checker?(slice, check)
-      i += 1
-      n += 1
-    end
-  end
-
-  def part_2(target)
-    i = 0
-    n = 1
-    while true
-      slice = data[i..n]
-      return slice.min + slice.max if slice.sum == target
-      if slice.sum > target
-        i += 1
-        n = i + 1
-      else
-        n += 1
-      end
-    end
-  end
-
-  def checker?(arr, num)
-    arr.combination(2).to_a.each do |check|
-      return true if check.sum == num
-    end
-    false
-  end
-end
-
+require_relative '../day_9/day_9'
 
 require 'tempfile'
 RSpec.describe 'Encoding Error' do
@@ -140,7 +100,7 @@ RSpec.describe 'Encoding Error' do
     it 'calculates the number to break on with real data' do
       path = File.expand_path(File.dirname(__FILE__) + "/encoding.txt")
       port_cracker = PortCracker.new(path)
-      expect(port_cracker.part_2(port_cracker.part_1(25))).to eq(62)
+      expect(port_cracker.part_2(port_cracker.part_1(25))).to eq(104800569)
     end
 
     end

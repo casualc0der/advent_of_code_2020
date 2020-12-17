@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Vertex
   attr_reader :name, :edges, :parent
   attr_accessor :contains

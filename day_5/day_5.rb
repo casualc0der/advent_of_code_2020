@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TicketScanner
   attr_reader :data, :seat_locations
 
@@ -5,7 +7,7 @@ class TicketScanner
 
   def initialize(file)
     @data = File.read(file).split(/\n/)
-    @seat_locations = data.map {|ticket| seat_finder(ticket)}
+    @seat_locations = data.map { |ticket| seat_finder(ticket) }
   end
 
   def largest_seat_id
@@ -13,12 +15,12 @@ class TicketScanner
   end
 
   def my_seat
-   ((8..largest_seat_id).to_a - seat_locations).first
+    ((8..largest_seat_id).to_a - seat_locations).first
   end
 
   def seat_finder(str)
     plane_rows = (0..127).to_a
-    plane_cols= (0..7).to_a
+    plane_cols = (0..7).to_a
     rows = str[0...7].split(//)
     cols = str[7..str.size].split(//)
 
@@ -28,9 +30,9 @@ class TicketScanner
     plane_rows.first * SEAT_ID_MODIFIER + plane_cols.first
   end
 
-  def seat_splitter(char, arr, pivot = arr.size/2)
-    return arr[0...pivot] if char == 'F' || char == 'L'
+  def seat_splitter(char, arr, pivot = arr.size / 2)
+    return arr[0...pivot] if %w[F L].include?(char)
+
     arr[pivot..arr.size]
   end
 end
-

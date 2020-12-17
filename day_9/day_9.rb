@@ -1,14 +1,19 @@
+# frozen_string_literal: true
+
 class PortCracker
   attr_reader :data
+
   def initialize(file)
     @data = File.read(file).split("\n").map(&:to_i)
   end
+
   def part_1(n)
     i = 0
     while n < data.size
       slice = data[i...n]
       check = data[n]
       return check unless checker?(slice, check)
+
       i += 1
       n += 1
     end
@@ -17,9 +22,10 @@ class PortCracker
   def part_2(target)
     i = 0
     n = 1
-    while true
+    loop do
       slice = data[i..n]
       return slice.min + slice.max if slice.sum == target
+
       if slice.sum > target
         i += 1
         n = i + 1
@@ -36,4 +42,3 @@ class PortCracker
     false
   end
 end
-

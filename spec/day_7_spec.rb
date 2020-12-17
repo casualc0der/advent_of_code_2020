@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../day_7/day_7'
 require 'tempfile'
 RSpec.describe 'Handy Haversacks' do

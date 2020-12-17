@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Report
   attr_reader :data
 
@@ -8,7 +10,7 @@ class Report
   # very slow, but easy to implement ;)
   def parse(entries_to_sum)
     @data.permutation(entries_to_sum)
-         .select {|x| x.sum == 2020}
+         .select { |x| x.sum == 2020 }
          .first
          .inject(:*)
   end

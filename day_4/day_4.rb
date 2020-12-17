@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 require_relative 'validator'
 class PassportScanner
   include Validator
 
-  REQUIRED_FIELDS = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid']
-  OPTIONAL_FIELDS = ['cid']
+  REQUIRED_FIELDS = %w[byr iyr eyr hgt hcl ecl pid].freeze
+  OPTIONAL_FIELDS = ['cid'].freeze
   attr_reader :data
+
   def initialize(file)
     @data = File.read(file).split("\n\n")
   end
@@ -14,8 +17,9 @@ class PassportScanner
   end
 
   def passenger_data
-    sanitized.map { |str| str.split(' ').map {|x| x.split(':')} }.map {|p| p.to_h}
+    sanitized.map { |str| str.split(' ').map { |x| x.split(':') } }.map(&:to_h)
   end
+
   def report(strictness = :lax)
     passenger_data.map { |passport| valid?(passport, strictness) ? 1 : 0 }.sum
   end
@@ -23,10 +27,10 @@ class PassportScanner
   def valid?(passport, flag)
     case flag
     when :lax
-      REQUIRED_FIELDS.each {|field| return false unless passport.has_key?(field) }
+      REQUIRED_FIELDS.each { |field| return false unless passport.key?(field) }
       true
     when :strict
-      REQUIRED_FIELDS.each {|field| return false unless passport.has_key?(field) }
+      REQUIRED_FIELDS.each { |field| return false unless passport.key?(field) }
       strict_validate(passport)
     end
   end

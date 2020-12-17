@@ -1,25 +1,27 @@
+# frozen_string_literal: true
+
 require_relative '../day_6/day_6'
 require 'tempfile'
 RSpec.describe 'Custom Customs' do
-  let(:test_data) {<<~FILE
-                   abc
+  let(:test_data) do
+    <<~FILE
+      abc
 
-                   a
-                   b
-                   c
+      a
+      b
+      c
 
-                   ab
-                   ac
+      ab
+      ac
 
-                   a
-                   a
-                   a
-                   a
+      a
+      a
+      a
+      a
 
-                   b
-                      FILE
-
-  }
+      b
+    FILE
+  end
   describe 'setup' do
     it 'can open a file to be read' do
       file = Tempfile.new
@@ -33,8 +35,8 @@ RSpec.describe 'Custom Customs' do
       file.write(test_data)
       file.flush
       customs_form = CustomsForm.new(file)
-      expected = [
-     "abc", "a\nb\nc", "ab\nac", "a\na\na\na", "b"
+      expected = %W[
+        abc a\nb\nc ab\nac a\na\na\na b
       ]
       expect(customs_form.data).to eq(expected)
     end
@@ -43,8 +45,8 @@ RSpec.describe 'Custom Customs' do
       file.write(test_data)
       file.flush
       customs_form = CustomsForm.new(file)
-      expected = [
-     "abc", "abc", "abac", "aaaa", "b"
+      expected = %w[
+        abc abc abac aaaa b
       ]
       expect(customs_form.sanitized_data).to eq(expected)
     end
@@ -54,12 +56,12 @@ RSpec.describe 'Custom Customs' do
       file.flush
       customs_form = CustomsForm.new(file)
       expected = [
-                 [ [ 'abc' ] ],
-                 [ [ 'a' ], [ 'b' ], [ 'c' ] ],
-                 [ [ 'ab' ], [ 'ac' ] ],
-                 [ [ 'a' ], [ 'a' ], [ 'a' ], [ 'a' ] ],
-                 [ [ 'b' ] ]
-                 # megaray.inject(&:&)
+        [['abc']],
+        [['a'], ['b'], ['c']],
+        [['ab'], ['ac']],
+        [['a'], ['a'], ['a'], ['a']],
+        [['b']]
+        #  megaray.inject(&:&)
       ]
       expect(customs_form.sanitized_group_data).to eq(expected)
     end
@@ -67,46 +69,45 @@ RSpec.describe 'Custom Customs' do
   describe 'part 1' do
     context '#questions_answered' do
       it 'can tally the amount of questions answered per group and return total (smol list)' do
-      file = Tempfile.new
-      file.write(test_data)
-      file.flush
-      customs_form = CustomsForm.new(file)
-      expect(customs_form.questions_answered).to eq(11)
+        file = Tempfile.new
+        file.write(test_data)
+        file.flush
+        customs_form = CustomsForm.new(file)
+        expect(customs_form.questions_answered).to eq(11)
       end
       it 'can tally the amount of questions answered per group and return total (full list)' do
-      path = File.expand_path(File.dirname(__FILE__) + "/customs_decs.txt")
-      customs_form = CustomsForm.new(path)
-      expect(customs_form.questions_answered).to eq(6809)
+        path = File.expand_path("#{File.dirname(__FILE__)}/customs_decs.txt")
+        customs_form = CustomsForm.new(path)
+        expect(customs_form.questions_answered).to eq(6809)
       end
     end
   end
-    describe 'part 2' do
-      context '#collective_questions_answered' do
-        it 'can tally the amount of shared questions answered per group and return total (smol list)' do
+  describe 'part 2' do
+    context '#collective_questions_answered' do
+      it 'can tally the amount of shared questions answered per group and return total (smol list)' do
         file = Tempfile.new
         file.write(test_data)
         file.flush
         customs_form = CustomsForm.new(file)
         expect(customs_form.collective_questions_answered).to eq(6)
-        end
+      end
       it 'can tally the amount of questions answered per group and return total (full list)' do
-      path = File.expand_path(File.dirname(__FILE__) + "/customs_decs.txt")
-      customs_form = CustomsForm.new(path)
-      expect(customs_form.collective_questions_answered).to eq(3394)
+        path = File.expand_path("#{File.dirname(__FILE__)}/customs_decs.txt")
+        customs_form = CustomsForm.new(path)
+        expect(customs_form.collective_questions_answered).to eq(3394)
       end
-      end
-      context '#checker' do
-        it 'can correctly check the differences between arrays' do
+    end
+    context '#checker' do
+      it 'can correctly check the differences between arrays' do
         file = Tempfile.new
         file.write('hello')
         file.flush
         customs_form = CustomsForm.new(file)
         expect(customs_form.checker([['abc']])).to eq(3)
-        expect(customs_form.checker([ [ 'a' ], [ 'b' ], [ 'c' ] ])).to eq(0)
-        expect(customs_form.checker([ [ 'ab' ], [ 'ac' ] ])).to eq(1)
-        expect(customs_form.checker([ ['b'] ])).to eq(1)
-        end
-
-        end
+        expect(customs_form.checker([['a'], ['b'], ['c']])).to eq(0)
+        expect(customs_form.checker([['ab'], ['ac']])).to eq(1)
+        expect(customs_form.checker([['b']])).to eq(1)
       end
+    end
   end
+end

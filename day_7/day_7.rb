@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'graph'
 require_relative 'vertex'
 require 'set'
@@ -31,7 +32,7 @@ class BagSorter
                    new_bag = bag.split(' ')
                    { 'name' => "#{new_bag[1]} #{new_bag[2]}", 'qty' => new_bag[0].to_i }
                  end
-                 end
+               end
     { 'name' => arr[0].strip, 'contains' => contains }
   end
 

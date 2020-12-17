@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'formatter'
 require_relative 'validator'
 
@@ -12,7 +14,7 @@ class PasswordChecker
 
   def check(flag = :part_1)
     data = format
-    data.map {|password_line| password_validator(password_line, flag) }.sum
+    data.map { |password_line| password_validator(password_line, flag) }.sum
   end
 
   def format
@@ -21,4 +23,3 @@ class PasswordChecker
     end
   end
 end
-

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Trajectory
   attr_reader :data
 
@@ -6,14 +8,15 @@ class Trajectory
   end
 
   def pattern
-    @data.map {|x| x * 75}
+    @data.map { |x| x * 75 }
   end
 
-  def single_journey(right=3, down=1)
+  def single_journey(right = 3, down = 1)
     trees_hit = 0
     current_index = 0
     pattern.each_with_index do |move, i|
       next if skip_row?(i, down)
+
       trees_hit += 1 if hit_a_tree?(move[current_index])
       current_index += right
     end
@@ -31,7 +34,6 @@ class Trajectory
   end
 
   def skip_row?(index, down)
-    index % 2 != 0 && down == 2
+    index.odd? && down == 2
   end
-
 end
